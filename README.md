@@ -19,5 +19,5 @@ Sections 14 and 23+ of the attached specification explicitly define the **Interp
 * **Operating Regimes:** A full ESR parameter sweep is included, validating the manifold's stability across the complete work zone.
 
 **Author / Inventor:** Benjamin Donovan Blackketter  
-**Primary Publication Anchor:** https://doi.org/10.5281/zenodo.18719729
+**Primary Publication Anchor:** https://doi.org/10.5281/zenodo.18822450
 
