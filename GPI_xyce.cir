@@ -1,0 +1,51 @@
+* LCFVR GPI Circuit - XYCE NATIVE MASTER BUILD
+* REGIME B (GPI WORK STATE)
+
+.param F_SRC=60
+.param VPK=175
+
+* AC Source
+V1 n1 0 SIN(0 {VPK} {F_SRC} 0 0)
+
+* Capacitive Reservoir Branch
+CRES n1 nC .1u
+R_C nC 0 10
+
+* Inductor Branch (Explicitly separated for Xyce)
+LLOAD n1 nL 70H
+R_LLOAD nL nMeas 20500
+
+* Dummy Ammeter
+V_AMMETER nMeas 0 0
+
+* Probes
+BVLIND vLind 0 V={V(n1)}
+BPSRC ps 0 V={-V(n1)*I(V1)}
+BPIND pi 0 V={V(vLind)*I(V_AMMETER)}
+
+* Measurements Window
+.meas TRAN Vrms_src RMS V(n1) FROM=3.983333 TO=4
+.meas TRAN Irms_src RMS I(V1) FROM=3.983333 TO=4
+.meas TRAN Vrms_ind RMS V(vLind) FROM=3.983333 TO=4
+.meas TRAN Irms_ind RMS I(V_AMMETER) FROM=3.983333 TO=4
+
+* Power Data
+.meas TRAN S_source PARAM={Vrms_src*Irms_src}
+.meas TRAN S_internal PARAM={Vrms_ind*Irms_ind}
+.meas TRAN P_src AVG V(ps) FROM=3.983333 TO=4
+.meas TRAN P_ind AVG V(pi) FROM=3.983333 TO=4
+
+* Phase Measurement
+.meas TRAN tVind WHEN V(vLind)=0 RISE=207
+.meas TRAN tiind WHEN I(V_AMMETER)=0 RISE=207
+.meas TRAN phi_time PARAM={360*(tiind-tVind)*F_SRC}
+
+* Geometry Ratio (G)
+.meas TRAN G_ratio PARAM={S_internal/S_source}
+
+* Explicit Data Export
+.PRINT TRAN V(n1) I(V1) V(vLind) I(V_AMMETER) V(ps) V(pi)
+
+* Transient Setup
+.tran 10u 4
+.end
